@@ -183,40 +183,31 @@ class App extends React.Component {
   };
 
   private handleOnClick = (): void => {
-    if (this.state.count > 2) {
-      ons.notification.alert({
-        title: '(´･ω･`)',
-        message: '一度に三回までしか引けないよ…',
-        buttonLabel: 'OK',
-        cancelable: true,
-      });
-    } else {
-      this.increment();
+    this.increment();
+    this.setState({
+      imgNum: 0,
+      cName: 'Running',
+      disable: !this.state.disable,
+    });
+    const omikuji = new Omikuji(config);
+    const fortune = omikuji.execute();
+    const oracle = Math.floor(Math.random() * ORACLES[0].length);
+    const newItem = {
+      fortune: fortune.id,
+      createdAt: new Date().toLocaleString(),
+      id: new Date().getTime(),
+      oracle: ORACLES[0][oracle],
+    };
+    setTimeout((): void => {
+      const imgNum = config.findIndex(x => x.id === fortune.id) + 1;
       this.setState({
-        imgNum: 0,
-        cName: 'Running',
+        scores: [newItem, ...this.state.scores],
+        imgNum: imgNum,
+        cName: 'fortune',
+        oracle: newItem.oracle,
         disable: !this.state.disable,
       });
-      const omikuji = new Omikuji(config);
-      const fortune = omikuji.execute();
-      const oracle = Math.floor(Math.random() * ORACLES[0].length);
-      const newItem = {
-        fortune: fortune.id,
-        createdAt: new Date().toLocaleString(),
-        id: new Date().getTime(),
-        oracle: ORACLES[0][oracle],
-      };
-      setTimeout((): void => {
-        const imgNum = config.findIndex(x => x.id === fortune.id) + 1;
-        this.setState({
-          scores: [newItem, ...this.state.scores],
-          imgNum: imgNum,
-          cName: 'fortune',
-          oracle: newItem.oracle,
-          disable: !this.state.disable,
-        });
-      }, 800);
-    }
+    }, 800);
   };
 
   public render(): JSX.Element {
