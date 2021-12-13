@@ -18,6 +18,8 @@ import HistoryPage from './HistoryPage';
 import HomePage from './HomePage';
 import SideBar from './SideBar';
 import ORACLES from './Oracles';
+import Omikuji from './Omikuji';
+import FortuneConfig from './FortuneConfig';
 
 interface Score {
   createdAt: string;
@@ -52,6 +54,14 @@ interface Props {
 
 const FORTUNES = ['大吉', '吉', '中吉', '小吉', '末吉', '凶', '大凶'];
 const TITLES = ['ホーム', '履歴'];
+
+const config: FortuneConfig[] = [
+  { id: '超大吉', val: 5 },
+  { id: '大大吉', val: 10 },
+  { id: '大吉', val: 50 },
+  { id: '中吉', val: 200 },
+  { id: '吉', val: 735 },
+];
 
 class App extends React.Component {
   public state: State = {
@@ -187,18 +197,20 @@ class App extends React.Component {
         cName: 'Running',
         disable: !this.state.disable,
       });
-      const fortune = Math.floor(Math.random() * FORTUNES.length);
-      const oracle = Math.floor(Math.random() * ORACLES[fortune].length);
+      const omikuji = new Omikuji(config);
+      const fortune = omikuji.execute();
+      const oracle = Math.floor(Math.random() * ORACLES[0].length);
       const newItem = {
-        fortune: FORTUNES[fortune],
+        fortune: fortune.id,
         createdAt: new Date().toLocaleString(),
         id: new Date().getTime(),
-        oracle: ORACLES[fortune][oracle],
+        oracle: ORACLES[0][oracle],
       };
       setTimeout((): void => {
+        const imgNum = config.findIndex(x => x.id === fortune.id) + 1;
         this.setState({
           scores: [newItem, ...this.state.scores],
-          imgNum: fortune + 1,
+          imgNum: imgNum,
           cName: 'fortune',
           oracle: newItem.oracle,
           disable: !this.state.disable,
