@@ -18,6 +18,8 @@ import HistoryPage from './HistoryPage';
 import HomePage from './HomePage';
 import SideBar from './SideBar';
 import ORACLES from './Oracles';
+import Omikuji from './Omikuji';
+import OmikujiConfig from './OmikujiConfig';
 
 interface Score {
   createdAt: string;
@@ -129,7 +131,12 @@ class App extends React.Component {
   };
 
   private onReload = (): void => {
-    window.location.reload();
+    OmikujiConfig.getInstance().reset()
+      .then(_ => {
+        window.location.reload();
+      }).catch(e => {
+        ons.notification.alert(e);
+      })
   };
   private openDrawer = (): void => {
     this.setState({ drawerOpen: true });
@@ -172,39 +179,34 @@ class App extends React.Component {
     this.closeDrawer();
   };
 
-  private handleOnClick = (): void => {
-    if (this.state.count > 2) {
-      ons.notification.alert({
-        title: '(´･ω･`)',
-        message: '一度に三回までしか引けないよ…',
-        buttonLabel: 'OK',
-        cancelable: true,
-      });
-    } else {
-      this.increment();
+  private handleOnClick = async (): Promise<void> => {
+    this.increment();
+    this.setState({
+      imgNum: 0,
+      cName: 'Running',
+      disable: !this.state.disable,
+    });
+    const config = await OmikujiConfig.getInstance().generateFortuneConfig();
+    const omikuji = new Omikuji(config);
+    const fortune = omikuji.execute();
+    const oracle = Math.floor(Math.random() * ORACLES[0].length);
+    const newItem = {
+      fortune: fortune.id,
+      createdAt: new Date().toLocaleString(),
+      id: new Date().getTime(),
+      oracle: ORACLES[0][oracle],
+    };
+    await OmikujiConfig.getInstance().decrement(fortune.id);
+    setTimeout((): void => {
+      const imgNum = config.findIndex(x => x.id === fortune.id) + 1;
       this.setState({
-        imgNum: 0,
-        cName: 'Running',
+        scores: [newItem, ...this.state.scores],
+        imgNum: imgNum,
+        cName: 'fortune',
+        oracle: newItem.oracle,
         disable: !this.state.disable,
       });
-      const fortune = Math.floor(Math.random() * FORTUNES.length);
-      const oracle = Math.floor(Math.random() * ORACLES[fortune].length);
-      const newItem = {
-        fortune: FORTUNES[fortune],
-        createdAt: new Date().toLocaleString(),
-        id: new Date().getTime(),
-        oracle: ORACLES[fortune][oracle],
-      };
-      setTimeout((): void => {
-        this.setState({
-          scores: [newItem, ...this.state.scores],
-          imgNum: fortune + 1,
-          cName: 'fortune',
-          oracle: newItem.oracle,
-          disable: !this.state.disable,
-        });
-      }, 800);
-    }
+    }, 800);
   };
 
   public render(): JSX.Element {
