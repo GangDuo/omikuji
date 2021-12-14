@@ -131,7 +131,12 @@ class App extends React.Component {
   };
 
   private onReload = (): void => {
-    window.location.reload();
+    OmikujiConfig.getInstance().reset()
+      .then(_ => {
+        window.location.reload();
+      }).catch(e => {
+        ons.notification.alert(e);
+      })
   };
   private openDrawer = (): void => {
     this.setState({ drawerOpen: true });

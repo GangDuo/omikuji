@@ -7,7 +7,15 @@ interface Config {
   total: number;
   probability: number;
 }
-  
+
+const defaultConf: Config[] = [
+  { id: '超大吉', total: 1, probability: 5 },
+  { id: '大大吉', total: 5, probability: 10 },
+  { id: '大吉', total: 10, probability: 50 },
+  { id: '中吉', total: 20, probability: 200 },
+  { id: '吉', total: 99999, probability: 735 },
+];
+
 export default class OmikujiConfig {
   private static instance: OmikujiConfig;
   private static localStore: LocalForage;
@@ -15,17 +23,10 @@ export default class OmikujiConfig {
   private constructor() {}
 
   private async getConfig(): Promise<Config[] | null> {
-    const defaultConf: Config[] = [
-      { id: '超大吉', total: 1, probability: 5 },
-      { id: '大大吉', total: 5, probability: 10 },
-      { id: '大吉', total: 10, probability: 50 },
-      { id: '中吉', total: 20, probability: 200 },
-      { id: '吉', total: 99999, probability: 735 },
-    ];
     try {
       let val: Config[] | null = await OmikujiConfig.localStore.getItem('config');
       if(!val) {
-        await OmikujiConfig.localStore.setItem("config", defaultConf);
+        await OmikujiConfig.instance.reset();
         val = defaultConf;
       }
       return val;
@@ -73,4 +74,8 @@ export default class OmikujiConfig {
         console.log(err);
     }
   };
+
+  async reset(): Promise<void> {
+    await OmikujiConfig.localStore.setItem("config", defaultConf);
+  }
 }
