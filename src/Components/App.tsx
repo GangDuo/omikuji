@@ -19,7 +19,7 @@ import HomePage from './HomePage';
 import SideBar from './SideBar';
 import ORACLES from './Oracles';
 import Omikuji from './Omikuji';
-import FortuneConfig from './FortuneConfig';
+import OmikujiConfig from './OmikujiConfig';
 
 interface Score {
   createdAt: string;
@@ -54,14 +54,6 @@ interface Props {
 
 const FORTUNES = ['大吉', '吉', '中吉', '小吉', '末吉', '凶', '大凶'];
 const TITLES = ['ホーム', '履歴'];
-
-const config: FortuneConfig[] = [
-  { id: '超大吉', val: 5 },
-  { id: '大大吉', val: 10 },
-  { id: '大吉', val: 50 },
-  { id: '中吉', val: 200 },
-  { id: '吉', val: 735 },
-];
 
 class App extends React.Component {
   public state: State = {
@@ -182,13 +174,14 @@ class App extends React.Component {
     this.closeDrawer();
   };
 
-  private handleOnClick = (): void => {
+  private handleOnClick = async (): Promise<void> => {
     this.increment();
     this.setState({
       imgNum: 0,
       cName: 'Running',
       disable: !this.state.disable,
     });
+    const config = await OmikujiConfig.getInstance().generateFortuneConfig();
     const omikuji = new Omikuji(config);
     const fortune = omikuji.execute();
     const oracle = Math.floor(Math.random() * ORACLES[0].length);
@@ -198,6 +191,7 @@ class App extends React.Component {
       id: new Date().getTime(),
       oracle: ORACLES[0][oracle],
     };
+    await OmikujiConfig.getInstance().decrement(fortune.id);
     setTimeout((): void => {
       const imgNum = config.findIndex(x => x.id === fortune.id) + 1;
       this.setState({
