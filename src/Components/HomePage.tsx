@@ -11,14 +11,12 @@ interface Props {
 }
 
 const IMAGES = [
-  'images/omikuji.png',
-  'images/daikichi.png',
-  'images/kichi.png',
-  'images/chuukichi.png',
-  'images/syoukichi.png',
-  'images/suekichi.png',
-  'images/kyou.png',
-  'images/daikyou.png',
+  'images/fukumikuji.jpg',
+  'images/1.jpg',
+  'images/2.jpg',
+  'images/3.jpg',
+  'images/4.jpg',
+  'images/5.jpg',
 ];
 
 const HomePage: React.FC<Props> = (props) => (
