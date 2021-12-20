@@ -15,6 +15,10 @@ interface Props {
 
 const fortuneStyle = (fortune: string): { color: string } => {
   switch (fortune) {
+    case '超大吉':
+      return { color: '#aa0066' };
+    case '大大吉':
+      return { color: '#0044cc' };
     case '大吉':
       return { color: '#cc0000' };
     case '吉':
