@@ -203,7 +203,7 @@ class App extends React.Component {
     };
     await OmikujiConfig.getInstance().decrement(fortune.id);
     setTimeout((): void => {
-      const imgNum = config.findIndex(x => x.id === fortune.id) + 1;
+      const imgNum = OmikujiConfig.keys.findIndex(x => x === fortune.id) + 1;
       this.setState({
         scores: [newItem, ...this.state.scores],
         imgNum: imgNum,
