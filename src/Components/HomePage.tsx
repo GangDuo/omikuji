@@ -31,21 +31,6 @@ const HomePage: React.FC<Props> = (props) => (
           おみくじ
         </Button>
       </div>
-      <div className="card-container">
-        <Card>
-          <div className="card-header">
-            <Icon
-              icon="md-face"
-              size={24}
-              style={{ color: '#e91e63', marginRight: 10 }}
-            />
-            きょうの占い
-          </div>
-          <div className="card-content">
-            <p>{props.oracle}</p>
-          </div>
-        </Card>
-      </div>
     </div>
   </Page>
 );

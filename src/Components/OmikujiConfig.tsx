@@ -17,6 +17,8 @@ const defaultConf: Config[] = [
 ];
 
 export default class OmikujiConfig {
+  static keys: string[] = defaultConf.map(x => x.id);
+
   private static instance: OmikujiConfig;
   private static localStore: LocalForage;
 
