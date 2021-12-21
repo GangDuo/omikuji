@@ -24,7 +24,7 @@ export default class OmikujiConfig {
 
   private async getConfig(): Promise<Config[] | null> {
     try {
-      let val: Config[] | null = await OmikujiConfig.localStore.getItem('config');
+      let val: Config[] | null = await localforage.getItem('config');
       if(!val) {
         await OmikujiConfig.instance.reset();
         val = defaultConf;
@@ -39,11 +39,6 @@ export default class OmikujiConfig {
   static getInstance(): OmikujiConfig {
     if (!OmikujiConfig.instance) {
       OmikujiConfig.instance = new OmikujiConfig();
-      
-      OmikujiConfig.localStore = localforage.createInstance({
-        driver: localforage.LOCALSTORAGE,
-        name: "omikuji"
-      });
     }
     return OmikujiConfig.instance;
   }
@@ -68,7 +63,7 @@ export default class OmikujiConfig {
           --row.total;
         }
       }
-      await OmikujiConfig.localStore.setItem("config", conf);
+      await localforage.setItem("config", conf);
     } catch (err) {
         // This code runs if there were any errors.
         console.log(err);
@@ -76,6 +71,6 @@ export default class OmikujiConfig {
   };
 
   async reset(): Promise<void> {
-    await OmikujiConfig.localStore.setItem("config", defaultConf);
+    await localforage.setItem("config", defaultConf);
   }
 }

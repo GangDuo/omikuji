@@ -52,6 +52,11 @@ interface Props {
   count: number;
 }
 
+localforage.config({
+  driver      : localforage.LOCALSTORAGE,
+  name        : 'omikuji',
+});
+
 const FORTUNES = ['大吉', '吉', '中吉', '小吉', '末吉', '凶', '大凶'];
 const TITLES = ['ホーム', '履歴'];
 
